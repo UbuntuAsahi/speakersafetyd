@@ -1,0 +1,6 @@
+speakersafetyd (0.1.9-1~ubuntuasahi1) mantic; urgency=medium
+
+  * Initial packaging for Ubuntu mantic
+  * Vendor rust dependencies
+
+ -- Tobias Heider <me@tobhe.de>  Fri, 22 Dec 2023 17:53:44 +0100

@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+CARGO := /usr/share/cargo/bin/cargo
+export CARGO_VENDOR_DIR = vendor_rust
+include /usr/share/rustc/architecture.mk
+
+%:
+	dh $@ --buildsystem cargo
+
+override_dh_auto_clean:
+	dh_auto_clean
+	dh_auto_clean --buildsystem=cargo
+
+	[ -d "$(CARGO_VENDOR_DIR)/" ] || \
+		CARGO=$(CARGO) DH_CARGO_VENDORED_SOURCES=$(DH_CARGO_VENDORED_SOURCES) \
+		CARGO_VENDOR_DIR=$(CARGO_VENDOR_DIR) debian/vendor-rust.sh
+
+override_dh_auto_test:
+	dh_auto_test -- test --all
+
+execute_after_dh_install:
+	# installs systemd service, udev rules, conf files and blackbox dir.
+	$(MAKE) install-data \
+		DESTDIR="debian/speakersafetyd" \
+		UNITDIR="$(shell pkg-config --variable=systemdsystemunitdir systemd)" \
+		UDEVDIR="$(shell pkg-config --variable=udevdir udev)/rules.d"
